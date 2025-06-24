@@ -25,9 +25,9 @@ const Course = ({course}) => {
 }
 
 const Total = ({parts}) => {
-  const exercises = parts.map(part => part.exercises)
-  const total = exercises.reduce(
-    (accumulator, currentValue) => accumulator + currentValue
+  const t = 0;
+  const total = parts.reduce(
+    (a, b) => a + b.exercises, t
   );
   return (
     <p>Number of exercises {total}</p>
