@@ -19,11 +19,20 @@ const Course = ({course}) => {
     <div>
       <Header name={course.name} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
 
-const Total = (props) => <p>Number of exercises {props.total}</p>
+const Total = ({parts}) => {
+  const exercises = parts.map(part => part.exercises)
+  const total = exercises.reduce(
+    (accumulator, currentValue) => accumulator + currentValue
+  );
+  return (
+    <p>Number of exercises {total}</p>
+  )
+}
 
 const App = () => {
   const course = {
