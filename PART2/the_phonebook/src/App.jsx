@@ -48,6 +48,16 @@ const App = () => {
     setNewNumber(e.target.value);
   }
 
+  const handleDelete = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService
+        .deletePerson(id)
+        .then(res => {
+          setPersons(persons.filter((person) => person.id != res.id))
+        })
+    }
+  }
+
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
     (e.target.value != '' ? setShowAll(false) : setShowAll(true))
@@ -70,7 +80,10 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Persons personToShow={personToShow} />
+      <Persons 
+        personToShow={personToShow}
+        handleDelete={handleDelete}
+      />
     </div>
   )
 }
