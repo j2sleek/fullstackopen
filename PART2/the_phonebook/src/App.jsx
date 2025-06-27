@@ -20,15 +20,28 @@ const App = () => {
   }, [])
 
   const handleSubmit = (e) => {
+    const personsNames = persons.map(person => person.name);
+  
     e.preventDefault();
     const newPerson = {
       name: newName,
       number: newNumber
     };
     if (
-      persons.map(person => person.name).includes(newName)
+      personsNames.includes(newName)
     ) {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const personToUpdate = persons.find(person => person.name === newName);
+        const updatedPerson = {...personToUpdate, number: newNumber};
+
+        personService
+          .updatePerson(personToUpdate.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.id === personToUpdate.id ? returnedPerson : person));
+            setNewName('');
+            setNewNumber('');
+          })
+      }
     } else {
         personService
           .addPerson(newPerson)
