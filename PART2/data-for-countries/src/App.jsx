@@ -1,10 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, use } from 'react';
 import axios from 'axios';
+
+const api_key = import.meta.env.VITE_OPEN_API;
 
 function App() {
   const [query, setQuery] = useState('');
   const [countries, setCountries] = useState([]);
   const [shownCountries, setShownCountries] = useState([]);
+  const [captial, setCapital] = useState('');
 
   useEffect(() => {
     axios
@@ -18,7 +21,26 @@ function App() {
   useEffect(() => {
     const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(query.toLowerCase()));
     setShownCountries(filteredCountries);
+    setCapital(filteredCountries.length === 1 ? filteredCountries[0].capital : '');
   }, [query])
+
+  useEffect(() => {
+    if (captial !== '') {
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${captial}&appid=${api_key}&units=metric`)
+        .then(res => {
+          setShownCountries([{
+            ...shownCountries[0],
+            temperature: res.data.main.temp,
+            wind: res.data.wind.speed,
+            icon: `https://openweathermap.org/img/wn/${res.data.weather[0].icon}@2x.png`
+          }])
+        })
+        .catch(err => {
+          setShownCountries([]);
+        })
+    }
+  }, [captial])
 
   const handleChange = (e) => {
     setQuery(e.target.value);
@@ -47,13 +69,17 @@ function App() {
         shownCountries.map(country => (
             <div key={country.name.official}>
               <h1>{country.name.common}</h1>
-              <p>capital {country.capital}</p>
-              <p>area {country.area}</p>
-              <h2>languages:</h2>
+              <p>Capital {country.capital}</p>
+              <p>Area {country.area}</p>
+              <h2>Languages:</h2>
               <ul>
                 {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
               </ul>
               <img src={country.flags.png} alt={country.flags.alt} />
+              <h2>Weather in {country.capital}</h2>
+              <p>Temperature {country.temperature} Celsius</p>
+              <img src={country.icon} alt={country.flags.alt} />
+              <p>Wind {country.wind} m/s</p>
             </div>
           )
         )
