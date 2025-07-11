@@ -1,28 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 function App() {
   const [query, setQuery] = useState('');
   const [countries, setCountries] = useState([]);
+  const [shownCountries, setShownCountries] = useState([]);
 
   useEffect(() => {
-    if (query) {
-      axios
-        .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
-        .then(res => {
-          const allCountries = res.data;
-          const filteredCountries = allCountries.filter(country => country.name.common.toLowerCase().includes(query.toLowerCase()));
-          setCountries(filteredCountries);
-        })
-        .catch(err => {
-          setCountries([]);
-        })
-    }
+    axios
+      .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
+      .then(res => setCountries(res.data))
+      .catch(err => {
+        setCountries([]);
+      })
+  }, [])
+
+  useEffect(() => {
+    const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(query.toLowerCase()));
+    setShownCountries(filteredCountries);
   }, [query])
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setQuery(e.target.value);
-  }
+  };
 
   return (
     <>
@@ -30,17 +30,21 @@ function App() {
         find countries <input value={query} onChange={handleChange}/>
       </p>
       {
-        (countries.length > 10) 
+        (shownCountries.length > 10) 
         ?
         'Too many matches, specify another filter'
         :
-        (countries.length > 1 && countries.length <= 10)
+        (shownCountries.length > 1 && shownCountries.length <= 10)
         ?
-        countries.map(country => <p key={country.name.official}>{country.name.common}</p>)
+        shownCountries.map(country => (
+            <p key={country.name.official}>
+              {country.name.common} 
+              <button onClick={() => setQuery(country.name.common)}>Show</button>
+            </p>))
         :
-        (countries.length === 1)
+        (shownCountries.length === 1)
         ?
-        countries.map(country => (
+        shownCountries.map(country => (
             <div key={country.name.official}>
               <h1>{country.name.common}</h1>
               <p>capital {country.capital}</p>
