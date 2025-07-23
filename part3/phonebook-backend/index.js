@@ -58,6 +58,18 @@ app.post('/api/persons', (request, response) => {
     const id = Math.floor(Math.random() * 1000000);
     person.id = String(id);
 
+    if (!person || !person.name || !person.number) {
+        return response.status(400).json({
+            error: 'Incorrect request object'
+        })
+    } 
+
+    if (persons.map(person => person.name).includes(person.name)) {
+        return response.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+
     persons = persons.concat(person);
 
     response.json(person);
