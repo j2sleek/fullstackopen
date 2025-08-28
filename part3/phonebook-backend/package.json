@@ -11,7 +11,8 @@
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../../PART2/the_phonebook && npm run build && cp -r dist ../../part3/phonebook-backend/",
-    "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild\" && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild\" && git push",
+    "lint": "eslint ."
   },
   "dependencies": {
     "dotenv": "^17.2.1",
