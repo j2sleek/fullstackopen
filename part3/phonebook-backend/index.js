@@ -27,7 +27,9 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/info', (request, response) => {
     const reqDate = new Date();
-    response.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${reqDate}</p>`);
+    Person.find({}).then(persons => {
+        response.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${reqDate}</p>`);
+    })
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
