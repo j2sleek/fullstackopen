@@ -44,6 +44,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => {
         response.json(persons);
+
     })
 });
 
@@ -54,13 +55,9 @@ app.get('/info', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id;
-    const person = persons.find(person => person.id === id);
-
-    if (person) {
-        response.send(person);
-    } else {
-        response.status(404).end();
-    }
+    Person.findById(id).then(person => {
+        response.json(person);
+    });
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -71,9 +68,7 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const person = request.body;
-    const id = Math.floor(Math.random() * 1000000);
-    person.id = String(id);
+    const person = new Person(request.body);
 
     if (!person || !person.name || !person.number || person.name === '' || person.number === '') {
         return response.status(400).json({
@@ -81,15 +76,9 @@ app.post('/api/persons', (request, response) => {
         })
     } 
 
-    if (persons.map(person => person.name).includes(person.name)) {
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
-
-    persons = persons.concat(person);
-
-    response.json(person);
+    person.save().then(savedPerson => {
+        response.json(savedPerson);
+    })
 })
 
 const PORT = process.env.PORT;
