@@ -24,10 +24,13 @@ const mostBlogs = (blogs) => {
         .maxBy(_.last)
         .thru(([author, value]) => ({ author, value }))
         .value()
+    
+    return maxBlogger
 }
 
 module.exports = { 
     dummy,
     totalLikes,
-    favoriteBlog
+    favoriteBlog,
+    mostBlogs
 }
