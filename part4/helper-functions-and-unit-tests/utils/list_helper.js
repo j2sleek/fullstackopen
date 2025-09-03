@@ -17,12 +17,12 @@ const favoriteBlog = (blogs) => {
     return blogs[likes.indexOf(maxLikes)]
 }
 
-const mostBlogs = (blogs) => {
-    const maxBlogger = _.chain(blogs)
+const mostBlogs = (allBlogs) => {
+    const maxBlogger = _.chain(allBlogs)
         .countBy('author')
         .toPairs()
         .maxBy(_.last)
-        .thru(([author, value]) => ({ author, value }))
+        .thru(([author, blogs]) => ({ author, blogs }))
         .value()
     
     return maxBlogger
