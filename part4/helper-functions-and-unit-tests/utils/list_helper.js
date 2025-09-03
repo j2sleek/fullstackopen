@@ -28,9 +28,21 @@ const mostBlogs = (allBlogs) => {
     return maxBlogger
 }
 
+const mostLikes = (allBlogs) => {
+    const allLikes = _.chain(allBlogs)
+        .maxBy('likes')
+        .value()
+    
+    return {
+        author: allLikes.author,
+        likes: allLikes.likes
+    }
+}
+
 module.exports = { 
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
