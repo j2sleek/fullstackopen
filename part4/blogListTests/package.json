@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "test": "cross-env NODE_ENV=test node --test",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4"
+  }
+}
