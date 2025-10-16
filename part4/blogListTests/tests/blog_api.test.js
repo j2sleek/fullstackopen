@@ -23,7 +23,7 @@ test('verifies the unique identifier is named id', async () => {
   assert(res[0].hasOwnProperty('id'))
 })
 
-test.only('verifies new blog post created', async () => {
+test('verifies new blog post created', async () => {
   const newBlog = {
     title: 'Checking POST request',
     author: 'Developer',
@@ -42,6 +42,21 @@ test.only('verifies new blog post created', async () => {
   
   const title = allBlogsInDb.map(t => t.title)
   assert(title.includes('Checking POST request'))
+})
+
+test.only('verifies like property defaults to 0', async () => {
+  const newBlog = {
+    title: 'This is a new blog',
+    author: 'Developer',
+    url: 'https://dev.io'
+  }
+
+  const res = await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  assert.strictEqual(res.body.likes, 0)
 })
 
 after(async () => {
