@@ -44,7 +44,7 @@ test('verifies new blog post created', async () => {
   assert(title.includes('Checking POST request'))
 })
 
-test.only('verifies like property defaults to 0', async () => {
+test('verifies like property defaults to 0', async () => {
   const newBlog = {
     title: 'This is a new blog',
     author: 'Developer',
@@ -57,6 +57,20 @@ test.only('verifies like property defaults to 0', async () => {
     .expect('Content-Type', /application\/json/)
   
   assert.strictEqual(res.body.likes, 0)
+})
+
+test.only('verifies 400 status response if title or url missing from request data', async () => {
+  const newBlog = {
+    author: 'Developer',
+    url: 'https://dev.io'
+  }
+
+  const res = await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+  
+  assert.strictEqual(res.body.message, 'title or url validation failed')
 })
 
 after(async () => {
