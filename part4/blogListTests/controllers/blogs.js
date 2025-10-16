@@ -1,4 +1,6 @@
 const blogsRouter = require('express').Router()
+const { response } = require('../app')
+const blog = require('../models/blog')
 const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
@@ -17,8 +19,19 @@ blogsRouter.post('/', async (request, response) => {
         message: 'title or url validation failed'
       })
     }
+  } 
+})
+
+blogsRouter.delete('/:id', async (request, response) => {
+  try {
+    const id = request.params.id
+    await Blog.findByIdAndDelete(id)
+    response.status(204).end()
+  } catch (error) {
+    response.status(400).json({
+      error: error.message
+    })
   }
-  
 })
 
 module.exports = blogsRouter

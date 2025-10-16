@@ -59,7 +59,7 @@ test('verifies like property defaults to 0', async () => {
   assert.strictEqual(res.body.likes, 0)
 })
 
-test.only('verifies 400 status response if title or url missing from request data', async () => {
+test('verifies 400 status response if title or url missing from request data', async () => {
   const newBlog = {
     author: 'Developer',
     url: 'https://dev.io'
@@ -71,6 +71,14 @@ test.only('verifies 400 status response if title or url missing from request dat
     .expect('Content-Type', /application\/json/)
   
   assert.strictEqual(res.body.message, 'title or url validation failed')
+})
+
+test.only('verifies deletion of blog post by id', async () => {
+  const allBlogsInDb = await helper.blogsInDb()
+  const blogToDelete = allBlogsInDb[0]
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
 })
 
 after(async () => {
