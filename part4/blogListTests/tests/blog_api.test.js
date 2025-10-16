@@ -73,12 +73,24 @@ test('verifies 400 status response if title or url missing from request data', a
   assert.strictEqual(res.body.message, 'title or url validation failed')
 })
 
-test.only('verifies deletion of blog post by id', async () => {
+test('verifies deletion of blog post by id', async () => {
   const allBlogsInDb = await helper.blogsInDb()
   const blogToDelete = allBlogsInDb[0]
 
   await api.delete(`/api/blogs/${blogToDelete.id}`)
     .expect(204)
+})
+
+test.only('verifies updating blog likes', async () => {
+  const allBlogsInDb = await helper.blogsInDb()
+  const blogToUpdate = allBlogsInDb[0]
+  blogToUpdate.likes += 3
+
+  const res = await api.put(`/api/blogs/${blogToUpdate.id}`)
+    .send(blogToUpdate)
+    .expect(200)
+
+  assert.strictEqual(res.body.likes, 5)
 })
 
 after(async () => {
