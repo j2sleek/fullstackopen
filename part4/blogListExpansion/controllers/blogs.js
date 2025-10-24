@@ -4,12 +4,12 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-blogsRouter.get('/', async (request, response, next) => {
+blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', async (request, response) => {
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
@@ -33,13 +33,45 @@ blogsRouter.post('/', async (request, response, next) => {
     response.status(201).json(res)
 
   } catch (error) {
-    next(error)
+    if (error.name === 'ValidationError') {
+      response.status(400).json({
+        message: 'title or url validation failed'
+      }) 
+    } else if (error.name === 'JsonWebTokenError') {
+      return response.status(401).json({ error: 'token invalid' })
+    } else {
+      response.status(400).json({
+        message: error.message
+      })
+    }
   } 
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
   try {
     const id = request.params.id
+
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({
+        message: 'token invalid'
+      })
+    }
+    const user = await User.findById(decodedToken.id)
+    if (!user) {
+      return response.status(400).json({
+        message: 'UserId missing or not valid'
+      })
+    }
+
+    const blog = await Blog.findById(id)
+
+    if (blog.user.toString() !== user._id.toString()) {
+      return response.status(401).json({
+        message: 'Unauthorized operation'
+      })
+    }
+    
     await Blog.findByIdAndDelete(id)
     response.status(204).end()
   } catch (error) {
