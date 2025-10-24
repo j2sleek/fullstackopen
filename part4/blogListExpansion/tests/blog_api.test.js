@@ -107,7 +107,7 @@ describe('when there is initially one user in db', () => {
     await user.save()
   })
 
-  test('creation succeeds with a fresh username', { only: true }, async () => {
+  test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -127,6 +127,51 @@ describe('when there is initially one user in db', () => {
 
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
+  })
+
+  test.only('Verifies that invalid users are not created with suitable status code and error message', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser1 = {
+      username: 'tr',
+      name: 'Test User',
+      password: 'Testing123'
+    }
+    const res1 = await api
+      .post('/api/users')
+      .send(newUser1)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    assert.strictEqual(res1.body.message, 'Invalid username. Username minLength must be at least 3 characters')
+
+    const newUser2 = {
+      username: 'trink',
+      name: 'Test User 2',
+      password: 'Te'
+    }
+    const res2 = await api
+      .post('/api/users')
+      .send(newUser2)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    assert.strictEqual(res2.body.message, 'password must be at least 3 characters long')
+    
+    const newUser3 = {
+      username: 'root',
+      password: 'Testing222',
+    }
+    const res3 = await api
+      .post('/api/users')
+      .send(newUser3)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(res3.body.message, 'username already taken')
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 })
 
