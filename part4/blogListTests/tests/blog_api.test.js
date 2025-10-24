@@ -81,7 +81,7 @@ test('verifies deletion of blog post by id', async () => {
     .expect(204)
 })
 
-test.only('verifies updating blog likes', async () => {
+test('verifies updating blog likes', async () => {
   const allBlogsInDb = await helper.blogsInDb()
   const blogToUpdate = allBlogsInDb[0]
   blogToUpdate.likes += 3
@@ -90,7 +90,7 @@ test.only('verifies updating blog likes', async () => {
     .send(blogToUpdate)
     .expect(200)
 
-  assert.strictEqual(res.body.likes, 5)
+  assert.strictEqual(res.body.likes, allBlogsInDb[0].likes + 3)
 })
 
 after(async () => {
