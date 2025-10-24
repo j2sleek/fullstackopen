@@ -3,7 +3,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imoyc2xlZWsiLCJpZCI6IjY4ZmI2ZDk4ZTQzZGIzNzk5NmFkZWU5NyIsImlhdCI6MTc2MTMyNzU3M30.RmPse5W8JXBmT5Ww-2gDE5Qcwny-k8NFYyKAX-dhHCw
 
 {
-    "title": "Adding a new title",
+    "title": "Testing Middleware",
     "author": "Teite Sampson",
     "url": "https://github.com/j2sleek"
 }
