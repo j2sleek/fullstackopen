@@ -2,6 +2,15 @@ const blogsRouter = require('express').Router()
 const { response } = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -10,11 +19,20 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   try {
-    const allUsers = await User.find({})
-    const user = allUsers[0]
-    request.body.user = user.id
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({
+        message: 'token invalid'
+      })
+    }
+    const user = await User.findById(decodedToken.id)
+    if (!user) {
+      return response.status(400).json({
+        message: 'UserId missing or not valid'
+      })
+    }
 
-    const blog = new Blog(request.body)
+    const blog = new Blog({...request.body, user: user._id})
     const res = await blog.save()
 
     user.blogs = user.blogs.concat(res._id)
@@ -27,7 +45,9 @@ blogsRouter.post('/', async (request, response) => {
       response.status(400).json({
         message: 'title or url validation failed'
       }) 
-    }else {
+    } else if (error.name === 'JsonWebTokenError') {
+      return response.status(401).json({ error: 'token invalid' })
+    } else {
       response.status(400).json({
         message: error.message
       })

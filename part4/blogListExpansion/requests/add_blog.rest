@@ -1,9 +1,9 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imoyc2xlZWsiLCJpZCI6IjY4ZmI2ZDk4ZTQzZGIzNzk5NmFkZWU5NyIsImlhdCI6MTc2MTMyNzU3M30.RmPse5W8JXBmT5Ww-2gDE5Qcwny-k8NFYyKAX-dhHCw
 
 {
-    "title": "Users Added",
-    "author": "University of Helsinki",
-    "url": "https://fullstackopen.com",
-    "likes": 2
+    "title": "Adding a new title",
+    "author": "Teite Sampson",
+    "url": "https://github.com/j2sleek"
 }
