@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "fullstackopen",
+    "title": "Users Added",
     "author": "University of Helsinki",
     "url": "https://fullstackopen.com",
-    "likes": 5
+    "likes": 2
 }
