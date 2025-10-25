@@ -17,7 +17,10 @@ describe('When there are 2 blog posts in db', () => {
   })
 
   test('all blogs are returned in JSON', async () => {
-    const res = await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+    const res = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
     assert.strictEqual(res.body.length, helper.initialBlogs.length)
   })
 
@@ -129,7 +132,7 @@ describe('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-  test.only('Verifies that invalid users are not created with suitable status code and error message', async () => {
+  test('Verifies that invalid users are not created with suitable status code and error message', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser1 = {
