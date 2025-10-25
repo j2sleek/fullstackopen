@@ -39,6 +39,7 @@ describe('When there are 2 blog posts in db', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${process.env.TOKEN}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -57,7 +58,9 @@ describe('When there are 2 blog posts in db', () => {
       url: 'https://dev.io'
     }
 
-    const res = await api.post('/api/blogs')
+    const res = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${process.env.TOKEN}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -71,7 +74,9 @@ describe('When there are 2 blog posts in db', () => {
       url: 'https://dev.io'
     }
 
-    const res = await api.post('/api/blogs')
+    const res = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${process.env.TOKEN}`)
       .send(newBlog)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -97,6 +102,22 @@ describe('When there are 2 blog posts in db', () => {
       .expect(200)
 
     assert.strictEqual(res.body.likes, allBlogsInDb[0].likes + 3)
+  })
+
+  test.only('verifies adding blog fails with 401 if no token is provided', async () => {
+    const newBlog = {
+      title: 'This is a new blog',
+      author: 'Developer',
+      url: 'https://dev.io'
+    }
+
+    const res = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
 })
 
